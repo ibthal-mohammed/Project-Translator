@@ -4,11 +4,13 @@ import { RegAuthDto } from './dto/reg-auth.dto';
 import { LoginAuthDto } from './dto/login-auth.dto';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
+import { Model } from 'mongoose';
+import { User } from 'src/users/user.model';
 
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectModel('user') private usersModel,
+    @InjectModel('user') private usersModel: Model<User>,
     private jwt: JwtService,
   ) {}
 
@@ -29,17 +31,18 @@ export class AuthService {
         secret: process.env.JWT_SECRET,
       },
     );
-    return { message: 'Login Successfully', token };
+    return token;
   }
 
   async Register(regAuthDto: RegAuthDto) {
     let foundUser = await this.usersModel.findOne({ email: regAuthDto.email });
-    if (foundUser) return { message: 'Email Already Exist, Please Login' };
+    if (foundUser) throw new Error('Email Already Exists, Please Login');
+
     let salt = await bcrypt.genSalt(10);
     let HashedPassword = await bcrypt.hash(regAuthDto.password, salt);
     regAuthDto.password = HashedPassword;
     let newUser = new this.usersModel(regAuthDto);
     await newUser.save();
-    return { message: 'Created Successfully', data: newUser };
+    return { data: newUser };
   }
 }

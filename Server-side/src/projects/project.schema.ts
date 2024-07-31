@@ -1,6 +1,6 @@
 import mongoose, { Schema } from 'mongoose';
 export let projectSchema = new mongoose.Schema({
-  title: String,
+  title: { type: String, required: true },
   userId: { type: Schema.Types.ObjectId, ref: 'users', required: true },
-  targetLanguage: String,
+  targetLanguage: { type: String, required: true },
 });
