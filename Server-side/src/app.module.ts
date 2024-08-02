@@ -11,7 +11,7 @@ import { ConfigModule } from '@nestjs/config';
   imports: [
     AuthModule,
     ConfigModule.forRoot(),
-    MongooseModule.forRoot('mongodb://localhost:27017/translator'),
+    MongooseModule.forRoot(process.env.DATABASE_URI),
     JwtModule.register({
       secret: process.env.JWT_SECRET,
     }),
