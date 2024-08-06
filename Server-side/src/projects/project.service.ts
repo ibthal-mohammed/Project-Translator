@@ -2,7 +2,6 @@ import { Injectable, Delete } from '@nestjs/common';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { Model, ObjectId } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { Request } from 'express';
 import { JwtService } from '@nestjs/jwt';
 import { Project } from './project.model';
 
@@ -12,15 +11,7 @@ export class ProjectService {
     @InjectModel('project') public projectModel: Model<Project>,
     private readonly jwtService: JwtService,
   ) {}
-  async create(createProjectDto: CreateProjectDto, id) {
-    // console.log(req.header);
-    // const authHeader = req.headers['authorization'];
-    // const token = authHeader.split(' ')[1];
-    // const decoded = await this.jwtService.verify(token, {
-    //   secret: process.env.JWT_SECRET,
-    // });
-    // // console.log(decoded.id);
-    // const userId = decoded.id;
+  async create(createProjectDto: CreateProjectDto, id: any) {
     let newProject = new this.projectModel(createProjectDto);
     newProject.userId = id;
     await newProject.save();
@@ -32,7 +23,7 @@ export class ProjectService {
     return project;
   }
 
-  async findOne(_id: ObjectId, id) {
+  async findOne(_id: ObjectId, id: any) {
     let project = await this.projectModel.findOne({
       _id,
       userId: id,
@@ -40,7 +31,7 @@ export class ProjectService {
     return project;
   }
 
-  async Delete(_id: ObjectId, id) {
+  async Delete(_id: ObjectId, id: any) {
     let project = await this.projectModel.findByIdAndDelete({
       _id,
       userId: id,

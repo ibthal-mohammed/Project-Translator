@@ -1,11 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { ObjectId } from 'mongoose';
-
-export class Project {
+export class Translate {
   @ApiProperty()
-  title: string;
+  key: string;
   @ApiProperty()
-  userId: ObjectId;
+  projectId: ObjectId;
   @ApiProperty()
-  targetLanguage: [string];
+  text: string;
+  @ApiProperty()
+  value: string[];
 }
