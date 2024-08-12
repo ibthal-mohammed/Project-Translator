@@ -48,5 +48,5 @@ export class CreateProjectDto {
   @IsString({ each: true })
   @IsArray()
   @ArrayNotEmpty()
-  targetLanguage: [String];
+  targetLanguage: String[];
 }
