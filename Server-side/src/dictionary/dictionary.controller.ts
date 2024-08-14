@@ -7,13 +7,9 @@ import {
   Param,
   Delete,
   UseGuards,
-  UsePipes,
-  ValidationPipe,
   Request,
 } from '@nestjs/common';
 import { DictionaryService } from './dictionary.service';
-import { CreateDictionaryDto } from './dto/create-dictionary.dto';
-import { UpdateDictionaryDto } from './dto/update-dictionary.dto';
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
@@ -25,6 +21,7 @@ import { ObjectId } from 'mongoose';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { Dictionary } from './dictionary.model';
 import { IsObjectIdPipe } from 'nestjs-object-id';
+import { UpdateDictionaryDto, CreateDictionaryDto } from './dto';
 
 @ApiTags('Dictionary')
 @ApiBearerAuth()
@@ -33,7 +30,6 @@ import { IsObjectIdPipe } from 'nestjs-object-id';
 export class DictionaryController {
   constructor(private readonly dictionaryService: DictionaryService) {}
 
-  @UsePipes(ValidationPipe)
   @Post()
   @ApiCreatedResponse({
     description: 'The text has been successfully Translated.',
@@ -48,14 +44,14 @@ export class DictionaryController {
     description: 'The ID of the project',
   })
   create(
-    @Body() createTranslateDto: CreateDictionaryDto,
+    @Body() createDictionaryDto: CreateDictionaryDto,
     @Param('projectId', IsObjectIdPipe) projectId: ObjectId,
     @Request() req,
   ) {
     const userId = req.user.id;
     return this.dictionaryService.addString(
       projectId,
-      createTranslateDto,
+      createDictionaryDto,
       userId,
     );
   }
@@ -102,12 +98,12 @@ export class DictionaryController {
     @Param('id', IsObjectIdPipe) dictionaryId: ObjectId,
     @Request() req,
 
-    @Body() updateTranslateDto: UpdateDictionaryDto,
+    @Body() updateDictionaryDto: UpdateDictionaryDto,
   ) {
     const userId = req.user.id;
     return this.dictionaryService.update(
       dictionaryId,
-      updateTranslateDto,
+      updateDictionaryDto,
       userId,
       projectId,
     );
