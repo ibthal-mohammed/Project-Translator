@@ -1,13 +1,6 @@
-import {
-  Controller,
-  Post,
-  Body,
-  UsePipes,
-  ValidationPipe,
-} from '@nestjs/common';
+import { Controller, Post, Body } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { RegAuthDto } from './dto/reg-auth.dto';
-import { LoginAuthDto } from './dto/login-auth.dto';
+import { RegAuthDto, LoginAuthDto } from './dto';
 import {
   ApiBadRequestResponse,
   ApiCreatedResponse,
@@ -19,8 +12,6 @@ import { User } from 'src/user/user.model';
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
-
-  @UsePipes(new ValidationPipe({ transform: true }))
   @Post('login')
   @ApiCreatedResponse({
     description: 'The user has been successfully login.',
@@ -32,7 +23,6 @@ export class AuthController {
   Login(@Body() loginAuthDto: LoginAuthDto) {
     return this.authService.Login(loginAuthDto);
   }
-  @UsePipes(ValidationPipe)
   @Post('signup')
   @ApiCreatedResponse({
     description: 'The user has been successfully created.',

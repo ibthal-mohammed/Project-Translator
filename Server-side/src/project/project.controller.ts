@@ -7,9 +7,6 @@ import {
   Delete,
   Request,
   UseGuards,
-  UsePipes,
-  ValidationPipe,
-  BadRequestException,
 } from '@nestjs/common';
 import { ProjectService } from './project.service';
 import { CreateProjectDto } from './dto/create-project.dto';
@@ -32,7 +29,6 @@ import { IsObjectIdPipe } from 'nestjs-object-id';
 export class ProjectController {
   constructor(private readonly projectService: ProjectService) {}
 
-  @UsePipes(ValidationPipe)
   @Post()
   @ApiCreatedResponse({
     description: 'The project has been successfully created.',

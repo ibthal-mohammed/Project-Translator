@@ -7,13 +7,9 @@ import {
   Param,
   Delete,
   UseGuards,
-  UsePipes,
-  ValidationPipe,
   Request,
 } from '@nestjs/common';
-import { TranslateService } from './dictionary.service';
-import { CreateTranslateDto } from './dto/create-dictionary.dto';
-import { UpdateTranslateDto } from './dto/update-dictionary.dto';
+import { DictionaryService } from './dictionary.service';
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
@@ -23,21 +19,21 @@ import {
 } from '@nestjs/swagger';
 import { ObjectId } from 'mongoose';
 import { AuthGuard } from 'src/auth/auth.guard';
-import { Translate } from './dictionary.model';
+import { Dictionary } from './dictionary.model';
 import { IsObjectIdPipe } from 'nestjs-object-id';
+import { UpdateDictionaryDto, CreateDictionaryDto } from './dto';
 
-@ApiTags('translate')
+@ApiTags('Dictionary')
 @ApiBearerAuth()
-@Controller('projects/:projectId/translate')
+@Controller('projects/:projectId/dictionary')
 @UseGuards(AuthGuard)
-export class TranslateController {
-  constructor(private readonly translateService: TranslateService) {}
+export class DictionaryController {
+  constructor(private readonly dictionaryService: DictionaryService) {}
 
-  @UsePipes(ValidationPipe)
   @Post()
   @ApiCreatedResponse({
     description: 'The text has been successfully Translated.',
-    type: Translate,
+    type: Dictionary,
   })
   @ApiBadRequestResponse({
     description: 'The user cannot add text.',
@@ -48,14 +44,14 @@ export class TranslateController {
     description: 'The ID of the project',
   })
   create(
-    @Body() createTranslateDto: CreateTranslateDto,
+    @Body() createDictionaryDto: CreateDictionaryDto,
     @Param('projectId', IsObjectIdPipe) projectId: ObjectId,
     @Request() req,
   ) {
     const userId = req.user.id;
-    return this.translateService.addString(
+    return this.dictionaryService.addString(
       projectId,
-      createTranslateDto,
+      createDictionaryDto,
       userId,
     );
   }
@@ -71,23 +67,23 @@ export class TranslateController {
     @Request() req,
   ) {
     const userId = req.user.id;
-    return this.translateService.findAll(projectId, userId);
+    return this.dictionaryService.findAll(projectId, userId);
   }
 
-  @Get(':id')
+  @Get(':language')
   @ApiParam({
     name: 'projectId',
     type: String,
     description: 'The ID of the project',
   })
-  @ApiParam({ name: 'id', type: String, description: 'The ID of the Text' })
+  @ApiParam({ name: 'language', type: String, description: 'The language' })
   findOne(
     @Param('projectId', IsObjectIdPipe) projectId: ObjectId,
-    @Param('id', IsObjectIdPipe) translateId: ObjectId,
+    @Param('language') language: string,
     @Request() req,
   ) {
     const userId = req.user.id;
-    return this.translateService.findOne(translateId, projectId, userId);
+    return this.dictionaryService.findOne(language, projectId, userId);
   }
 
   @Patch(':id')
@@ -99,15 +95,15 @@ export class TranslateController {
   @ApiParam({ name: 'id', type: String, description: 'The ID of the Text' })
   update(
     @Param('projectId', IsObjectIdPipe) projectId: ObjectId,
-    @Param('id', IsObjectIdPipe) translateId: ObjectId,
+    @Param('id', IsObjectIdPipe) dictionaryId: ObjectId,
     @Request() req,
 
-    @Body() updateTranslateDto: UpdateTranslateDto,
+    @Body() updateDictionaryDto: UpdateDictionaryDto,
   ) {
     const userId = req.user.id;
-    return this.translateService.update(
-      translateId,
-      updateTranslateDto,
+    return this.dictionaryService.update(
+      dictionaryId,
+      updateDictionaryDto,
       userId,
       projectId,
     );
@@ -122,10 +118,10 @@ export class TranslateController {
   @ApiParam({ name: 'id', type: String, description: 'The ID of the Text' })
   remove(
     @Param('projectId', IsObjectIdPipe) projectId: ObjectId,
-    @Param('id', IsObjectIdPipe) translateId: ObjectId,
+    @Param('id', IsObjectIdPipe) dictionaryId: ObjectId,
     @Request() req,
   ) {
     const userId = req.user.id;
-    return this.translateService.remove(translateId, projectId, userId);
+    return this.dictionaryService.remove(dictionaryId, projectId, userId);
   }
 }
