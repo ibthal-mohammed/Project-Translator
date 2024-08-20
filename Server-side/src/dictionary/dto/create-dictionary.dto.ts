@@ -1,39 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsNotEmpty,
-  IsString,
-  Validate,
-  ValidatorConstraint,
-  ValidatorConstraintInterface,
-} from 'class-validator';
+import { Transform } from 'class-transformer';
+import { IsNotEmpty, IsString } from 'class-validator';
 
-@ValidatorConstraint({ name: 'isKeyValid', async: false })
-export class IsKeyValid implements ValidatorConstraintInterface {
-  validate(key: string) {
-    const trimmedKey = key.trim();
-    return trimmedKey.length > 0;
-  }
-  defaultMessage(): string {
-    return 'key  cannot consist only of whitespace';
-  }
-}
-@ValidatorConstraint({ name: 'isKeyValid', async: false })
-export class IsTextValid implements ValidatorConstraintInterface {
-  validate(text: string) {
-    const trimmedText = text.trim();
-    return trimmedText.length > 0;
-  }
-  defaultMessage(): string {
-    return 'text  cannot consist only of whitespace';
-  }
-}
 export class CreateDictionaryDto {
   @ApiProperty({
     description: 'the key of operation',
     example: '1k',
   })
   @IsString()
-  @Validate(IsKeyValid)
+  @Transform(({ value }) => value.trim())
   @IsNotEmpty()
   public key: String;
   @ApiProperty({
@@ -42,6 +17,6 @@ export class CreateDictionaryDto {
   })
   @IsString()
   @IsNotEmpty()
-  @Validate(IsTextValid)
+  @Transform(({ value }) => value.trim())
   public text: String;
 }
