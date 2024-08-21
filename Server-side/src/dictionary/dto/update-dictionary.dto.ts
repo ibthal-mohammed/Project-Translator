@@ -6,6 +6,7 @@ export class UpdateDictionaryDto extends PartialType(CreateDictionaryDto) {
   @ApiProperty({
     description: 'translate the text',
     example: ['Bonjour', 'مرحبا'],
+    required: false,
   })
   @IsString({ each: true })
   @IsArray()

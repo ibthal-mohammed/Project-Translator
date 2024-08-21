@@ -6,9 +6,8 @@ import {
   ApiCreatedResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { User } from 'src/user/user.model';
-
-@ApiTags('auth')
+import { User } from 'src/user/user.schema';
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -20,8 +19,8 @@ export class AuthController {
   @ApiBadRequestResponse({
     description: 'The user cannot login.',
   })
-  Login(@Body() loginAuthDto: LoginAuthDto) {
-    return this.authService.Login(loginAuthDto);
+  login(@Body() loginAuthDto: LoginAuthDto) {
+    return this.authService.login(loginAuthDto);
   }
   @Post('signup')
   @ApiCreatedResponse({
@@ -31,7 +30,8 @@ export class AuthController {
   @ApiBadRequestResponse({
     description: 'The user cannot register.',
   })
-  Reg(@Body() regAuthDto: RegAuthDto) {
-    return this.authService.Register(regAuthDto);
+  async register(@Body() regAuthDto: RegAuthDto) {
+    await this.authService.register(regAuthDto);
+    return `register successfully`;
   }
 }
